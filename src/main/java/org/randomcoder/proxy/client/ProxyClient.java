@@ -126,7 +126,7 @@ public class ProxyClient
 			}
 			catch (SocketTimeoutException e)
 			{
-				logger.debug("Timeout");
+				logger.trace("Timeout");
 				continue;
 			}
 			
