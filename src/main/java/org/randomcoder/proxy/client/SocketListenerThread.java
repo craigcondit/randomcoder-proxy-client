@@ -8,7 +8,6 @@ import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.Logger;
-
 import org.randomcoder.proxy.client.config.ProxyConfigurationListener;
 
 /**
@@ -137,7 +136,9 @@ public class SocketListenerThread extends Thread
 			{
 				Credentials creds = auth.getCredentials(name, proxyUrl, username, force);
 				if (creds == null)
+				{
 					throw new IOException("No credentials supplied");
+				}
 
 				client.getState().setCredentials(new AuthScope(proxyHost, proxyPort, AuthScope.ANY_REALM), creds);		
 				force = true;
@@ -244,6 +245,9 @@ public class SocketListenerThread extends Thread
 		}
 	}
 	
+	/**
+	 * Shuts the socket listener down.
+	 */
 	public void shutdown()
 	{
 		shutdown = true;
@@ -333,7 +337,7 @@ public class SocketListenerThread extends Thread
 			get.setDoAuthentication(true);
 			get.setFollowRedirects(false);
 			get.getParams().setVersion(HttpVersion.HTTP_1_1);
-			get.getParams().setSoTimeout(0);
+			get.getParams().setSoTimeout(30000);
 			get.setRequestHeader("User-Agent", "Randomcoder-Proxy 1.0-SNAPSHOT");
 			
 			int status = client.executeMethod(get);
