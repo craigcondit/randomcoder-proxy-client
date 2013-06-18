@@ -164,6 +164,7 @@ public class ProxyOutputStream extends OutputStream
 			get = new GetMethod(proxyUrl + "/ping?id=" + URLEncoder.encode(connectionId, "UTF-8"));
 			get.setFollowRedirects(false);
 			get.getParams().setVersion(HttpVersion.HTTP_1_1);
+			get.getParams().setSoTimeout(30000);
 			get.setRequestHeader("User-Agent", "Randomcoder-Proxy 1.0-SNAPSHOT");
 			int status = client.executeMethod(get);
 			
