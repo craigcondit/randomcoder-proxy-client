@@ -157,6 +157,9 @@ public class ProxyInputStream extends InputStream
 			
 			offset = 0;
 			remaining = size;
+			
+			logger.debug("Received " + size + " bytes");
+			listener.dataReceived(null, size);			
 		}
 	}
 
@@ -175,7 +178,6 @@ public class ProxyInputStream extends InputStream
 		}
 
 		remaining--;
-		listener.dataReceived(null, 1L);
 		return buffer[offset++];
 	}
 
@@ -202,13 +204,11 @@ public class ProxyInputStream extends InputStream
 			System.arraycopy(buffer, offset, b, off, len);
 			remaining -= len;
 			offset += len;
-			listener.dataReceived(null, len);
 			return len;
 		}
 
 		System.arraycopy(buffer, offset, b, off, remaining);
 		offset += remaining;
-		listener.dataReceived(null, remaining);
 		int result = remaining;
 		remaining = 0;
 
