@@ -6,7 +6,6 @@ import java.net.URLEncoder;
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.Logger;
-
 import org.randomcoder.proxy.client.config.ProxyConfigurationListener;
 
 /**
@@ -41,14 +40,17 @@ import org.randomcoder.proxy.client.config.ProxyConfigurationListener;
 public class ProxyInputStream extends InputStream
 {
 	private static final Logger logger = Logger.getLogger(ProxyInputStream.class);
-	
+
 	private final HttpClient client;
 	private final String proxyUrl;
 	private final String connectionId;
 	private final GetMethod connection;
-	private final InputStream inputStream;
+	private final DataInputStream inputStream;
 	private final ProxyConfigurationListener listener;
-	
+	private byte[] buffer;
+	private int offset = 0;
+	private int remaining = 0;
+
 	/**
 	 * Creates a new input stream connected to a remote HTTP proxy.
 	 * 
@@ -62,150 +64,205 @@ public class ProxyInputStream extends InputStream
 	 *             if an error occurs while establishing communications
 	 */
 	public ProxyInputStream(HttpClient client, String proxyUrl, String connectionId, ProxyConfigurationListener listener)
-	throws IOException
+			throws IOException
 	{
 		logger.debug("Creating proxy input stream");
-		
+
 		this.client = client;
 		this.proxyUrl = proxyUrl;
 		this.connectionId = connectionId;
 		this.listener = listener;
-		
+
+		buffer = new byte[32768];
+
 		connection = openConnection();
-		
+
 		logger.debug("Getting response as stream");
-		
-		inputStream = connection.getResponseBodyAsStream();
-		
+
+		inputStream = new DataInputStream(connection.getResponseBodyAsStream());
 		logger.debug("Got response stream");
 		
 		logger.debug("Removing first line");
 		
 		while (inputStream.read() != '\n') {}
-		
-		logger.debug("Proxy input stream initialized");
-	}
-	
-	@Override
-	public int read() throws IOException
-	{
-		int result = inputStream.read();
-		if (result >= 0 && listener != null)
-			listener.dataReceived(null, 1L);
-		
-		return result;
-	}
 
-	@Override
-	public int available() throws IOException
-	{
-		return inputStream.available();
+		logger.debug("Proxy input stream initialized");
 	}
 
 	@Override
 	public void close() throws IOException
 	{
 		logger.debug("close()");
-		
+
 		logger.debug("Aborting connection...");
-		try { connection.abort(); } catch (Throwable ignored) {}
-		
+		try
+		{
+			connection.abort();
+		}
+		catch (Throwable ignored)
+		{
+		}
+
 		logger.debug("Closing input stream...");
-		try { inputStream.close(); } catch (Throwable ignored) {}
-		
+		try
+		{
+			inputStream.close();
+		}
+		catch (Throwable ignored)
+		{
+		}
+
 		logger.debug("Releasing connection...");
-		try { connection.releaseConnection(); } catch (Throwable ignored) {}
-		
+		try
+		{
+			connection.releaseConnection();
+		}
+		catch (Throwable ignored)
+		{
+		}
+
 		logger.debug("close() complete");
 	}
 
-	@Override
-	public synchronized void mark(int readlimit)
+	private void fillBuffer() throws IOException
 	{
-		inputStream.mark(readlimit);
+		int size = 0;
+
+		while (size == 0)
+		{
+			try
+			{
+				size = inputStream.readInt();
+			}
+			catch (EOFException e)
+			{
+				offset = 0;
+				remaining = -1;
+				return;
+			}
+
+			if (size < 0 || size > buffer.length)
+			{
+				throw new IOException("Protocol error: Got invalid length " + size);
+			}
+
+			try
+			{
+				inputStream.readFully(buffer, 0, size);
+			}
+			catch (EOFException e)
+			{
+				throw new IOException("Protocol error: Input stream ended prematurely");
+			}
+			
+			offset = 0;
+			remaining = size;
+		}
 	}
 
 	@Override
-	public boolean markSupported()
+	public int read() throws IOException
 	{
-		return inputStream.markSupported();
+		if (remaining == 0)
+		{
+			fillBuffer();
+		}
+
+		if (remaining < 1)
+		{
+			// EOF
+			return -1;
+		}
+
+		remaining--;
+		listener.dataReceived(null, 1L);
+		return buffer[offset++];
 	}
 
 	@Override
 	public int read(byte[] b, int off, int len) throws IOException
 	{
-		int result = inputStream.read(b, off, len);
-		
-		if (result > 0 && listener != null)
-			listener.dataReceived(null, result);
-		
+		if (remaining == 0)
+		{
+			fillBuffer();
+		}
+
+		if (remaining < 0)
+		{
+			return -1;
+		}
+
+		if (remaining == 0)
+		{
+			return 0;
+		}
+
+		if (remaining >= len)
+		{
+			System.arraycopy(buffer, offset, b, off, len);
+			remaining -= len;
+			offset += len;
+			listener.dataReceived(null, len);
+			return len;
+		}
+
+		System.arraycopy(buffer, offset, b, off, remaining);
+		offset += remaining;
+		listener.dataReceived(null, remaining);
+		int result = remaining;
+		remaining = 0;
+
 		return result;
 	}
 
 	@Override
-	public int read(byte[] b) throws IOException
+	public int available() throws IOException
 	{
-		int result = inputStream.read(b);
-		
-		if (result > 0 && listener != null)
-			listener.dataReceived(null, result);
-		
-		return result;
-	}
-
-	@Override
-	public synchronized void reset() throws IOException
-	{
-		inputStream.reset();
-	}
-
-	@Override
-	public long skip(long n) throws IOException
-	{
-		long result = inputStream.skip(n);
-
-		if (result > 0 && listener != null)
-			listener.dataReceived(null, result);
-		
-		return result;
+		return remaining;
 	}
 
 	private GetMethod openConnection()
-	throws IOException
+			throws IOException
 	{
 		logger.debug("Opening connection");
-		
+
 		GetMethod get = new GetMethod(proxyUrl + "/receive?id=" + URLEncoder.encode(connectionId, "UTF-8"));
-		
+
 		get.setDoAuthentication(true);
 		get.setFollowRedirects(false);
 		get.getParams().setVersion(HttpVersion.HTTP_1_1);
 		get.getParams().setSoTimeout(0);
 		get.setRequestHeader("User-Agent", "Randomcoder-Proxy 1.0-SNAPSHOT");
-		
+
 		logger.debug("Executing method");
 		int status = client.executeMethod(get);
-		
+
 		logger.debug("Recieve executed");
-		
+
 		if (status == HttpStatus.SC_OK)
 			return get;
-		
+
 		try
 		{
 			if (status == HttpStatus.SC_NOT_FOUND)
 			{
 				String response = get.getResponseBodyAsString();
-				
+
 				// not found. means connection is unavailable
 				throw new IOException(response);
 			}
-			
+
 			throw new IOException("Got unknown status from proxy server: " + status);
 		}
 		finally
 		{
-			try { get.releaseConnection(); } catch (Throwable ignored) {}
+			try
+			{
+				get.releaseConnection();
+			}
+			catch (Throwable ignored)
+			{
+			}
 		}
 	}
 }
