@@ -95,7 +95,11 @@ public class ProxyOutputStream extends OutputStream
 			post.setFollowRedirects(false);
 			post.getParams().setVersion(HttpVersion.HTTP_1_1);
 			post.setRequestHeader("User-Agent", "Randomcoder-Proxy 1.0-SNAPSHOT");
-			post.setRequestEntity(new InputStreamRequestEntity(new ByteArrayInputStream(b, off, len), len));
+			
+			byte[] output = new byte[len];
+			System.arraycopy(b, off, output, 0, len);
+			
+			post.setRequestEntity(new ByteArrayRequestEntity(output));
 			int status = client.executeMethod(post);
 			
 			logger.debug("PROXY OUTPUT: Got result: " + status);
