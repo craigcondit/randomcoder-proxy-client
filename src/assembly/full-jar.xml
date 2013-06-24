@@ -10,10 +10,6 @@
       <outputFileNameMapping></outputFileNameMapping>
       <unpack>true</unpack>
       <scope>runtime</scope>
-      <excludes>
-      	<exclude>junit:junit</exclude>
-      	<exclude>javax.servlet:servlet-api</exclude>
-      </excludes>
     </dependencySet>
   </dependencySets>
   <fileSets>
