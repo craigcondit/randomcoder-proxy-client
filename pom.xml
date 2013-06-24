@@ -10,7 +10,7 @@
 	<artifactId>randomcoder-proxy-client</artifactId>
 	<packaging>jar</packaging>
 	<name>Randomcoder Proxy Client</name>
-	<version>1.0.0</version>
+	<version>1.0.1-SNAPSHOT</version>
 	<description>HTTP Tunneling Proxy Client</description>
 	<url>https://nexus.randomcoder.org/content/sites/randomcoder-proxy-client/</url>
 	<inceptionYear>2007</inceptionYear>
