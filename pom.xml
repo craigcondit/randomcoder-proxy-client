@@ -137,6 +137,7 @@
 					<jvmVersion>1.5+</jvmVersion>
 					<dictionaryFile>${basedir}/src/main/app-resources/Info.plist</dictionaryFile>
 					<iconFile>${basedir}/src/main/app-resources/Icon.icns</iconFile>
+					<javaApplicationStub>${basedir}/src/main/app-resources/JavaApplicationStub</javaApplicationStub>
 				</configuration>
 				<executions>
 					<execution>
