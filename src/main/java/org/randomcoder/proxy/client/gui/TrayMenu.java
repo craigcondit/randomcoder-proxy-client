@@ -6,6 +6,7 @@ import java.util.*;
 
 import javax.swing.*;
 
+import org.randomcoder.apple.eawt.Application;
 import org.randomcoder.systray.*;
 
 /**
@@ -44,8 +45,7 @@ public class TrayMenu
 	private final LinkedList<ActionListener> closeListeners = new LinkedList<ActionListener>();
 	private int proxies = 0;
 	private int connections = 0;
-	private final boolean mac = System.getProperty("os.name").toLowerCase().contains("mac");
-
+	private static final boolean mac = Application.isSupported();
 	private boolean visible = false;
 	
 	/**
@@ -72,15 +72,17 @@ public class TrayMenu
 			Dimension size = tray.getTrayIconSize();
 			int w = (int) size.getWidth();
 			
-			String filename = "/tray-icon-256x256.png";
+			String prefix = mac ? "/tray-icon-bw" : "/tray-icon";
+			
+			String filename = prefix + "-256x256.png";
 			if (w <= 16)
-				filename = "/tray-icon-16x16.png";
+				filename = prefix + "-16x16.png";
 			else if (w <= 32)
-				filename = "/tray-icon-32x32.png";
+				filename = prefix + "-32x32.png";
 			else if (w <= 64)
-				filename = "/tray-icon-64x64.png";
+				filename = prefix + "-64x64.png";
 			else if (w <= 128)
-				filename = "/tray-icon-128x128.png";
+				filename = prefix + "-128x128.png";
 			
 			ImageIcon trayImage = new ImageIcon(getClass().getResource(filename));
 			

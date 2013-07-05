@@ -70,7 +70,6 @@ public class MainWindow extends JFrame implements ProxyConfigurationListener
 	public MainWindow(final AboutWindow aboutWindow, final PreferencesWindow prefsWindow)
 	{
 		super("HTTP Proxy Status");
-			
 		mac = Application.isSupported();
 		
 		// TODO Make updates actually refresh the connection list view on Mac OS X.
