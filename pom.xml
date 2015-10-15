@@ -4,7 +4,7 @@
   <parent>
     <artifactId>randomcoder-base</artifactId>
     <groupId>org.randomcoder</groupId>
-    <version>25</version>
+    <version>27</version>
   </parent>
   <groupId>org.randomcoder</groupId>
   <artifactId>randomcoder-proxy-client</artifactId>
@@ -12,22 +12,28 @@
   <name>Randomcoder Proxy Client</name>
   <version>1.0.3-SNAPSHOT</version>
   <description>HTTP Tunneling Proxy Client</description>
-  <url>https://randomcoder.org/nexus/content/sites/randomcoder-proxy-client/</url>
+  <url>https://github.com/insideo/randomcoder-proxy-client</url>
   <inceptionYear>2007</inceptionYear>
   <scm>
-    <connection>scm:git:https://randomcoder.org/scm/git/randomcoder-proxy-client</connection>
-    <developerConnection>scm:git:https://randomcoder.org/scm/git/randomcoder-proxy-client</developerConnection>
-    <url>https://randomcoder.org/cgit/public/randomcoder-proxy-client/</url>
+    <connection>scm:git:https://github.com/insideo/randomcoder-proxy-client.git</connection>
+    <developerConnection>scm:git:git@github.com:insideo/randomcoder-proxy-server.git</developerConnection>
+    <url>https://github.com/insideo/randomcoder-proxy-client</url>
   </scm>
-  <distributionManagement>
-    <site>
-      <id>randomcoder-site</id>
-      <url>dav:https://${repository.host}/nexus/content/sites/${project.artifactId}</url>
-    </site>
-  </distributionManagement>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
+  <repositories>
+    <repository>
+      <id>bintray-randomcoder-release</id>
+      <url>https://dl.bintray.com/insideo/randomcoder-release</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -62,6 +68,13 @@
     </dependency>
   </dependencies>
   <build>
+    <extensions>
+      <extension>
+        <groupId>org.springframework.build</groupId>
+        <artifactId>aws-maven</artifactId>
+        <version>5.0.0.RELEASE</version>
+      </extension>
+    </extensions>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -148,56 +161,6 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <artifactId>maven-site-plugin</artifactId>
-        <version>3.3</version>
-        <configuration>
-          <relativizeDecorationLinks>false</relativizeDecorationLinks>
-        </configuration>
-      </plugin>
     </plugins>
   </build>  
-  <reporting>
-    <plugins>
-      <plugin>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.9</version>
-        <configuration>
-          <charset>UTF-8</charset>
-          <docencoding>UTF-8</docencoding>
-          <links>
-            <link>http://docs.oracle.com/javase/6/docs/api</link>
-            <link>http://docs.oracle.com/javaee/5/api/</link>
-          </links>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>cobertura-maven-plugin</artifactId>
-        <version>2.5.2</version>
-      </plugin>
-      <plugin>
-        <artifactId>maven-surefire-report-plugin</artifactId>
-        <version>2.15</version>
-      </plugin>
-      <plugin>
-        <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>2.7</version>
-        <reportSets>
-          <reportSet>
-            <reports>
-              <report>index</report>
-              <report>cim</report>
-              <report>dependencies</report>
-              <report>issue-tracking</report>
-              <report>license</report>
-              <report>summary</report>
-              <report>project-team</report>
-              <report>scm</report>
-            </reports>
-          </reportSet>
-        </reportSets>
-      </plugin>
-    </plugins>
-  </reporting>  
 </project>
