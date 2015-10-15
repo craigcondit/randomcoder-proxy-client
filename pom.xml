@@ -14,6 +14,9 @@
   <description>HTTP Tunneling Proxy Client</description>
   <url>https://github.com/insideo/randomcoder-proxy-client</url>
   <inceptionYear>2007</inceptionYear>
+  <prerequisites>
+    <maven>3.3.3</maven>
+  </prerequisites>
   <scm>
     <connection>scm:git:https://github.com/insideo/randomcoder-proxy-client.git</connection>
     <developerConnection>scm:git:git@github.com:insideo/randomcoder-proxy-server.git</developerConnection>
@@ -78,7 +81,7 @@
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
+        <version>3.3</version>
         <configuration>
           <source>1.5</source>
           <target>1.5</target>
@@ -86,7 +89,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
-        <version>2.4</version>
+        <version>2.6</version>
         <configuration>
           <finalName>randomcoder-proxy</finalName>
           <archive>
@@ -111,7 +114,7 @@
        </plugin>      
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>2.4</version>
+        <version>2.6</version>
         <configuration>
           <finalName>randomcoder-proxy</finalName>
           <archive>
@@ -124,7 +127,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.15</version>
+        <version>2.18.1</version>
         <configuration>
           <testFailureIgnore>false</testFailureIgnore>
         </configuration>
@@ -132,7 +135,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>cobertura-maven-plugin</artifactId>
-        <version>2.5.2</version>
+        <version>2.7</version>
         <executions>
           <execution>
             <goals>
