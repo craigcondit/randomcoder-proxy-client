@@ -19,7 +19,7 @@
   </prerequisites>
   <scm>
     <connection>scm:git:https://github.com/insideo/randomcoder-proxy-client.git</connection>
-    <developerConnection>scm:git:git@github.com:insideo/randomcoder-proxy-server.git</developerConnection>
+    <developerConnection>scm:git:git@github.com:insideo/randomcoder-proxy-client.git</developerConnection>
     <url>https://github.com/insideo/randomcoder-proxy-client</url>
   </scm>
   <properties>
