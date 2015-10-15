@@ -90,8 +90,8 @@ public class ProxyConfigurationStatistics extends ProxyConfiguration implements 
 
 	/**
 	 * Creates a new configuration item
-	 * @param source
-	 * @param newConfig
+	 * @param source source object
+	 * @param config new configuration
 	 */
 	public ProxyConfigurationStatistics(ProxyConfigurationStatistics source, ProxyConfiguration config)
 	{

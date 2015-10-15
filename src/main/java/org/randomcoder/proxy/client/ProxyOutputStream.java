@@ -55,6 +55,8 @@ public class ProxyOutputStream extends OutputStream
 	 * 
 	 * @param client
 	 *          HTTP client to use for connections
+	 * @param proxyUrl
+	 *          proxy URL
 	 * @param connectionId
 	 *          connection id
 	 *          @param listener proxy configuration listener

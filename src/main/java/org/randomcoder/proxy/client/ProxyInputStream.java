@@ -56,6 +56,8 @@ public class ProxyInputStream extends InputStream
 	 * 
 	 * @param client
 	 *            HTTP client to use for connections
+	 * @param proxyUrl
+	 *            proxy URL
 	 * @param connectionId
 	 *            connection id
 	 * @param listener

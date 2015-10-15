@@ -51,7 +51,7 @@ public class PasswordDialog extends JDialog
 	 *            name of proxy to display
 	 * @param proxyUrl
 	 *            URL of remote proxy to display
-	 * @param username
+	 * @param user
 	 *            default username
 	 */
 	public PasswordDialog(JFrame parent, String name, String proxyUrl, String user)
