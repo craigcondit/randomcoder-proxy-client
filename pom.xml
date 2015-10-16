@@ -2,9 +2,9 @@
           
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <artifactId>randomcoder-base</artifactId>
+    <artifactId>randomcoder-parent</artifactId>
     <groupId>org.randomcoder</groupId>
-    <version>27</version>
+    <version>1</version>
   </parent>
   <groupId>org.randomcoder</groupId>
   <artifactId>randomcoder-proxy-client</artifactId>
@@ -23,6 +23,25 @@
     <url>https://github.com/insideo/randomcoder-proxy-client</url>
     <tag>HEAD</tag>
   </scm>
+  <developers>
+    <developer>
+      <id>ccondit</id>
+      <name>Craig Condit</name>
+      <email>ccondit@randomcoder.org</email>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>-7</timezone>
+    </developer>
+  </developers>
+  <licenses>
+    <license>
+      <name>New BSD License</name>
+      <url>http://www.opensource.org/licenses/bsd-license.php</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
@@ -48,12 +67,12 @@
     <dependency>
       <groupId>org.randomcoder</groupId>
       <artifactId>randomcoder-system-tray</artifactId>
-      <version>1.1.4</version>
+      <version>1.1.5</version>
     </dependency>
     <dependency>
       <groupId>org.randomcoder</groupId>
       <artifactId>randomcoder-mac-gui</artifactId>
-      <version>1.1.4</version>
+      <version>1.1.5</version>
     </dependency>
     <dependency>
       <groupId>commons-httpclient</groupId>
