@@ -1,6 +1,6 @@
 package org.randomcoder.proxy.client;
 
-import org.apache.commons.httpclient.Credentials;
+import org.apache.http.auth.Credentials;
 
 /**
  * Authenticator interface used to prompt a user for login information.

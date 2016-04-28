@@ -10,7 +10,7 @@
 	</appender>
 	
 	<logger name="org.randomcoder">
-		<level value="info" />
+		<level value="debug" />
 	</logger>
 
 	<logger name="org.apache">
@@ -21,8 +21,8 @@
 		<level value="warn" />
 	</logger>
 
-	<logger name="httpclient.wire">
-		<level value="info" />
+	<logger name="apache.http">
+		<level value="warn" />
 	</logger>
 	
 	<root>

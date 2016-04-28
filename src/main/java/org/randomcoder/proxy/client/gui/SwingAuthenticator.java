@@ -2,8 +2,8 @@ package org.randomcoder.proxy.client.gui;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.httpclient.*;
-
+import org.apache.http.auth.Credentials;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.randomcoder.proxy.client.Authenticator;
 
 /**

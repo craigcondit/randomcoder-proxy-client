@@ -5,7 +5,7 @@ import java.net.*;
 import java.util.*;
 import java.util.prefs.*;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.randomcoder.proxy.client.ProxyClient;
 import org.randomcoder.proxy.client.validation.*;

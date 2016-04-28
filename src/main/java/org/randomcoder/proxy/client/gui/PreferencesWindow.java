@@ -12,7 +12,7 @@ import java.util.prefs.BackingStoreException;
 import javax.swing.*;
 import javax.swing.event.*;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import org.randomcoder.proxy.client.config.*;
@@ -59,7 +59,7 @@ public class PreferencesWindow extends JFrame
 	private final JTextField remoteHost;
 	private final JTextField remotePort;
 	private final JTextField localPort;
-	private final JList connectionList;
+	private final JList<ProxyConfiguration> connectionList;
 	private final JButton addButton;
 	private final JButton deleteButton;
 	private final ProxyListModel listModel;
@@ -109,7 +109,7 @@ public class PreferencesWindow extends JFrame
 		
 		listModel = new ProxyListModel();
 		
-		connectionList = new JList(listModel);
+		connectionList = new JList<ProxyConfiguration>(listModel);
 		connectionList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
 		ProxyListCellRenderer cellRenderer = new ProxyListCellRenderer();
@@ -579,7 +579,7 @@ public class PreferencesWindow extends JFrame
 	/**
 	 * Proxy list model.
 	 */
-	protected final class ProxyListModel extends AbstractListModel
+	protected final class ProxyListModel extends AbstractListModel<ProxyConfiguration>
 	{
 		private List<ProxyConfiguration> data = new ArrayList<ProxyConfiguration>();
 
@@ -708,7 +708,7 @@ public class PreferencesWindow extends JFrame
 		 *            <code>true</code> if cell has focus
 		 */
 		@Override
-		public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus)
+		public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus)
 		{
 			ProxyConfiguration item = (ProxyConfiguration) value;
 			

@@ -51,7 +51,7 @@ public class MainWindow extends JFrame implements ProxyConfigurationListener
 	private static final Logger logger = Logger.getLogger(MainWindow.class);
 	
 	private final ConnectionListModel listModel;
-	private final JList connectionList;
+	private final JList<ProxyConfigurationStatistics> connectionList;
 	private final JButton connectButton;
 	private final JButton disconnectButton;
 	private final SwingAuthenticator auth = new SwingAuthenticator();
@@ -231,7 +231,7 @@ public class MainWindow extends JFrame implements ProxyConfigurationListener
 		// set up a list of connections		
 		listModel = new ConnectionListModel();
 
-		connectionList = new JList(listModel);
+		connectionList = new JList<ProxyConfigurationStatistics>(listModel);
 		connectionList.setCellRenderer(new ConnectionListCellRenderer());
 		connectionList.addListSelectionListener(new ListSelectionListener()
 		{
@@ -566,7 +566,7 @@ public class MainWindow extends JFrame implements ProxyConfigurationListener
 		disconnectButton.setEnabled(allowDisconnect);
 	}
 	
-	private static class ConnectionListModel extends AbstractListModel
+	private static class ConnectionListModel extends AbstractListModel<ProxyConfigurationStatistics>
 	{
 		private static final long serialVersionUID = 7645396010970634961L;
 
@@ -686,7 +686,7 @@ public class MainWindow extends JFrame implements ProxyConfigurationListener
 		 * @return graphical representation of list item
 		 */
 		@Override
-		public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus)
+		public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus)
 		{
 			ProxyConfigurationStatistics stats = (ProxyConfigurationStatistics) value;
 			
