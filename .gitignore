@@ -2,4 +2,9 @@
 **/.DS_Store
 .svn
 **/.svn
-target
+/target
+*.iml
+.project
+.classpath
+.settings
+.idea
