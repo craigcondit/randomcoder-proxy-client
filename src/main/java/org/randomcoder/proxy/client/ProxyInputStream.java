@@ -1,11 +1,5 @@
 package org.randomcoder.proxy.client;
 
-import java.io.DataInputStream;
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URLEncoder;
-
 import org.apache.commons.codec.Charsets;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHost;
@@ -19,22 +13,28 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.log4j.Logger;
 import org.randomcoder.proxy.client.config.ProxyConfigurationListener;
 
+import java.io.DataInputStream;
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URLEncoder;
+
 /**
  * <code>InputStream</code> implementation which wraps a remote proxied
  * connection.
- * 
+ *
  * <pre>
  * Copyright (c) 2007, Craig Condit. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *   * Redistributions of source code must retain the above copyright notice,
  *     this list of conditions and the following disclaimer.
  *   * Redistributions in binary form must reproduce the above copyright notice,
  *     this list of conditions and the following disclaimer in the documentation
  *     and/or other materials provided with the distribution.
- *     
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot;
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -49,203 +49,196 @@ import org.randomcoder.proxy.client.config.ProxyConfigurationListener;
  * </pre>
  */
 public class ProxyInputStream extends InputStream {
-	private static final Logger logger = Logger.getLogger(ProxyInputStream.class);
+  private static final Logger logger = Logger.getLogger(ProxyInputStream.class);
 
-	private final HttpResponse connection;
-	private final HttpGet get;
-	private final DataInputStream inputStream;
-	private final ProxyConfigurationListener listener;
-	private final CloseableHttpClient client;
-	private final HttpHost httpHost;
-	private final HttpClientContext localContext;
-	private byte[] buffer;
-	private int offset = 0;
-	private int remaining = 0;
+  private final HttpResponse connection;
+  private final HttpGet get;
+  private final DataInputStream inputStream;
+  private final ProxyConfigurationListener listener;
+  private final CloseableHttpClient client;
+  private final HttpHost httpHost;
+  private final HttpClientContext localContext;
+  private byte[] buffer;
+  private int offset = 0;
+  private int remaining = 0;
 
-	/**
-	 * Creates a new input stream connected to a remote HTTP proxy.
-	 * 
-	 * @param client
-	 *            HTTP client to use for connections
-	 * @param httpHost
-	 *            HTTP host to connect to
-	 * @param localContext
-	 *            local HTTP context
-	 * @param proxyUrl
-	 *            proxy URL
-	 * @param connectionId
-	 *            connection id
-	 * @param listener
-	 *            proxy configuration listener
-	 * @throws IOException
-	 *             if an error occurs while establishing communications
-	 */
-	public ProxyInputStream(CloseableHttpClient client, HttpHost httpHost, HttpClientContext localContext,
-			String proxyUrl, String connectionId, ProxyConfigurationListener listener) throws IOException {
-		logger.debug("Creating proxy input stream");
+  /**
+   * Creates a new input stream connected to a remote HTTP proxy.
+   *
+   * @param client       HTTP client to use for connections
+   * @param httpHost     HTTP host to connect to
+   * @param localContext local HTTP context
+   * @param proxyUrl     proxy URL
+   * @param connectionId connection id
+   * @param listener     proxy configuration listener
+   * @throws IOException if an error occurs while establishing communications
+   */
+  public ProxyInputStream(CloseableHttpClient client, HttpHost httpHost,
+      HttpClientContext localContext, String proxyUrl, String connectionId,
+      ProxyConfigurationListener listener) throws IOException {
+    logger.debug("Creating proxy input stream");
 
-		this.client = client;
-		this.listener = listener;
-		this.httpHost = httpHost;
-		this.localContext = localContext;
+    this.client = client;
+    this.listener = listener;
+    this.httpHost = httpHost;
+    this.localContext = localContext;
 
-		buffer = new byte[32768];
+    buffer = new byte[32768];
 
-		this.get = new HttpGet(proxyUrl + "/receive?id=" + URLEncoder.encode(connectionId, "UTF-8"));
-		get.setProtocolVersion(new ProtocolVersion("http", 1, 1));
-		get.setConfig(RequestConfig.custom().setSocketTimeout(0).setRedirectsEnabled(false)
-				.setAuthenticationEnabled(true).build());
-		get.setHeader("User-Agent", "Randomcoder-Proxy 1.0-SNAPSHOT");
+    this.get = new HttpGet(
+        proxyUrl + "/receive?id=" + URLEncoder.encode(connectionId, "UTF-8"));
+    get.setProtocolVersion(new ProtocolVersion("http", 1, 1));
+    get.setConfig(
+        RequestConfig.custom().setSocketTimeout(0).setRedirectsEnabled(false)
+            .setAuthenticationEnabled(true).build());
+    get.setHeader("User-Agent", "Randomcoder-Proxy 1.0-SNAPSHOT");
 
-		this.connection = openConnection(get);
+    this.connection = openConnection(get);
 
-		logger.debug("Getting response as stream");
+    logger.debug("Getting response as stream");
 
-		logger.debug("Chunked: " + connection.getEntity().isChunked());
-		logger.debug("Streaming: " + connection.getEntity().isStreaming());
-		
-		inputStream = new DataInputStream(connection.getEntity().getContent());
-		logger.debug("Got response stream");
+    logger.debug("Chunked: " + connection.getEntity().isChunked());
+    logger.debug("Streaming: " + connection.getEntity().isStreaming());
 
-		logger.debug("Removing first line");
+    inputStream = new DataInputStream(connection.getEntity().getContent());
+    logger.debug("Got response stream");
 
-		while (inputStream.read() != '\n') {
-		}
+    logger.debug("Removing first line");
 
-		logger.debug("Proxy input stream initialized");
-	}
+    while (inputStream.read() != '\n') {
+    }
 
-	@Override
-	public void close() throws IOException {
-		logger.debug("close()");
+    logger.debug("Proxy input stream initialized");
+  }
 
-		logger.debug("Aborting connection...");
-		try {
-			get.abort();
-		} catch (Throwable ignored) {
-		}
+  @Override public void close() throws IOException {
+    logger.debug("close()");
 
-		logger.debug("Closing input stream...");
-		try {
-			inputStream.close();
-		} catch (Throwable ignored) {
-		}
+    logger.debug("Aborting connection...");
+    try {
+      get.abort();
+    } catch (Throwable ignored) {
+    }
 
-		logger.debug("Releasing connection...");
-		try {
-			get.releaseConnection();
-		} catch (Throwable ignored) {
-		}
+    logger.debug("Closing input stream...");
+    try {
+      inputStream.close();
+    } catch (Throwable ignored) {
+    }
 
-		logger.debug("close() complete");
-	}
+    logger.debug("Releasing connection...");
+    try {
+      get.releaseConnection();
+    } catch (Throwable ignored) {
+    }
 
-	private void fillBuffer() throws IOException {
-		int size = 0;
+    logger.debug("close() complete");
+  }
 
-		while (size == 0) {
-			try {
-				size = inputStream.readInt();
-			} catch (EOFException e) {
-				offset = 0;
-				remaining = -1;
-				return;
-			}
+  private void fillBuffer() throws IOException {
+    int size = 0;
 
-			if (size < 0 || size > buffer.length) {
-				throw new IOException("Protocol error: Got invalid length " + size);
-			}
+    while (size == 0) {
+      try {
+        size = inputStream.readInt();
+      } catch (EOFException e) {
+        offset = 0;
+        remaining = -1;
+        return;
+      }
 
-			try {
-				inputStream.readFully(buffer, 0, size);
-			} catch (EOFException e) {
-				throw new IOException("Protocol error: Input stream ended prematurely");
-			}
+      if (size < 0 || size > buffer.length) {
+        throw new IOException("Protocol error: Got invalid length " + size);
+      }
 
-			offset = 0;
-			remaining = size;
+      try {
+        inputStream.readFully(buffer, 0, size);
+      } catch (EOFException e) {
+        throw new IOException("Protocol error: Input stream ended prematurely");
+      }
 
-			logger.debug("Received " + size + " bytes");
-			listener.dataReceived(null, size);
-		}
-	}
+      offset = 0;
+      remaining = size;
 
-	@Override
-	public int read() throws IOException {
-		if (remaining == 0) {
-			fillBuffer();
-		}
+      logger.debug("Received " + size + " bytes");
+      listener.dataReceived(null, size);
+    }
+  }
 
-		if (remaining < 1) {
-			// EOF
-			return -1;
-		}
+  @Override public int read() throws IOException {
+    if (remaining == 0) {
+      fillBuffer();
+    }
 
-		remaining--;
-		return buffer[offset++];
-	}
+    if (remaining < 1) {
+      // EOF
+      return -1;
+    }
 
-	@Override
-	public int read(byte[] b, int off, int len) throws IOException {
-		if (remaining == 0) {
-			fillBuffer();
-		}
+    remaining--;
+    return buffer[offset++];
+  }
 
-		if (remaining < 0) {
-			return -1;
-		}
+  @Override public int read(byte[] b, int off, int len) throws IOException {
+    if (remaining == 0) {
+      fillBuffer();
+    }
 
-		if (remaining == 0) {
-			return 0;
-		}
+    if (remaining < 0) {
+      return -1;
+    }
 
-		if (remaining >= len) {
-			System.arraycopy(buffer, offset, b, off, len);
-			remaining -= len;
-			offset += len;
-			return len;
-		}
+    if (remaining == 0) {
+      return 0;
+    }
 
-		System.arraycopy(buffer, offset, b, off, remaining);
-		offset += remaining;
-		int result = remaining;
-		remaining = 0;
+    if (remaining >= len) {
+      System.arraycopy(buffer, offset, b, off, len);
+      remaining -= len;
+      offset += len;
+      return len;
+    }
 
-		return result;
-	}
+    System.arraycopy(buffer, offset, b, off, remaining);
+    offset += remaining;
+    int result = remaining;
+    remaining = 0;
 
-	@Override
-	public int available() throws IOException {
-		return remaining;
-	}
+    return result;
+  }
 
-	private HttpResponse openConnection(HttpGet get) throws IOException {
-		logger.debug("Opening connection");
+  @Override public int available() throws IOException {
+    return remaining;
+  }
 
-		logger.debug("Executing method");
-		HttpResponse httpResponse = client.execute(httpHost, get, localContext);
+  private HttpResponse openConnection(HttpGet get) throws IOException {
+    logger.debug("Opening connection");
 
-		int status = httpResponse.getStatusLine().getStatusCode();
+    logger.debug("Executing method");
+    HttpResponse httpResponse = client.execute(httpHost, get, localContext);
 
-		logger.debug("Receive executed");
+    int status = httpResponse.getStatusLine().getStatusCode();
 
-		if (status == HttpStatus.SC_OK)
-			return httpResponse;
+    logger.debug("Receive executed");
 
-		try {
-			if (status == HttpStatus.SC_NOT_FOUND) {
-				String response = IOUtils.toString(httpResponse.getEntity().getContent(), Charsets.UTF_8);
+    if (status == HttpStatus.SC_OK)
+      return httpResponse;
 
-				// not found. means connection is unavailable
-				throw new IOException(response);
-			}
+    try {
+      if (status == HttpStatus.SC_NOT_FOUND) {
+        String response = IOUtils
+            .toString(httpResponse.getEntity().getContent(), Charsets.UTF_8);
 
-			throw new IOException("Got unknown status from proxy server: " + status);
-		} finally {
-			try {
-				get.releaseConnection();
-			} catch (Throwable ignored) {
-			}
-		}
-	}
+        // not found. means connection is unavailable
+        throw new IOException(response);
+      }
+
+      throw new IOException("Got unknown status from proxy server: " + status);
+    } finally {
+      try {
+        get.releaseConnection();
+      } catch (Throwable ignored) {
+      }
+    }
+  }
 }

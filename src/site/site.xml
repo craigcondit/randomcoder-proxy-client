@@ -1,19 +1,19 @@
 <project>
-  <bannerLeft>
-  	<src>https://randomcoder.org/images/randomcoder-logo.png</src>
-  	<href>https://randomcoder.org/</href>
-  </bannerLeft>
-  <bannerRight>
-  	<name>${project.name}</name>
-  </bannerRight>
-  <body>
-  	<links>
-  		<item name="Home" href="https://randomcoder.org/" />
-  		<item name="Proxy Client" href="../randomcoder-proxy-client/" />
-  		<item name="Proxy Server" href="../randomcoder-proxy-server/" />
-  	</links>
-  	
-  	${reports}
-  	
-  </body>
+    <bannerLeft>
+        <src>https://randomcoder.org/images/randomcoder-logo.png</src>
+        <href>https://randomcoder.org/</href>
+    </bannerLeft>
+    <bannerRight>
+        <name>${project.name}</name>
+    </bannerRight>
+    <body>
+        <links>
+            <item name="Home" href="https://randomcoder.org/"/>
+            <item name="Proxy Client" href="../randomcoder-proxy-client/"/>
+            <item name="Proxy Server" href="../randomcoder-proxy-server/"/>
+        </links>
+
+        ${reports}
+
+    </body>
 </project>

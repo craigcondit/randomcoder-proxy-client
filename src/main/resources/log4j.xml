@@ -2,32 +2,33 @@
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
 
-	<appender name="console" class="org.apache.log4j.ConsoleAppender">
-		<param name="Target" value="System.out" />
-		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="%d{d-MMM HH:mm:ss,SSS} - %-5.5p - %c{3} %L - %m%n" />
-		</layout>
-	</appender>
-	
-	<logger name="org.randomcoder">
-		<level value="debug" />
-	</logger>
+    <appender name="console" class="org.apache.log4j.ConsoleAppender">
+        <param name="Target" value="System.out"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                   value="%d{d-MMM HH:mm:ss,SSS} - %-5.5p - %c{3} %L - %m%n"/>
+        </layout>
+    </appender>
 
-	<logger name="org.apache">
-		<level value="warn" />
-	</logger>
-	
-	<logger name="org.springframework">
-		<level value="warn" />
-	</logger>
+    <logger name="org.randomcoder">
+        <level value="debug"/>
+    </logger>
 
-	<logger name="apache.http">
-		<level value="warn" />
-	</logger>
-	
-	<root>
-		<priority value="debug" />
-		<appender-ref ref="console" />
-	</root>
-	
+    <logger name="org.apache">
+        <level value="warn"/>
+    </logger>
+
+    <logger name="org.springframework">
+        <level value="warn"/>
+    </logger>
+
+    <logger name="apache.http">
+        <level value="warn"/>
+    </logger>
+
+    <root>
+        <priority value="debug"/>
+        <appender-ref ref="console"/>
+    </root>
+
 </log4j:configuration>
